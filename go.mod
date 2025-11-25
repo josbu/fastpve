@@ -19,5 +19,5 @@ require (
 	golang.org/x/sys v0.33.0 // indirect
 )
 
-replace github.com/kspeeder/blobDownload => ../blobDownload
-replace github.com/kspeeder/docker-registry => ../docker-registry
+//replace github.com/kspeeder/blobDownload => ../blobDownload
+//replace github.com/kspeeder/docker-registry => ../docker-registry
