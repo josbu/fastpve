@@ -27,6 +27,10 @@ cd /tmp; wget --no-check-certificate -O fastpve-install.sh https://www.linkease.
 * https://files.dog/MSDN/Windows%207/en_windows_7_ultimate_with_sp1_x64_dvd_u_677332.iso
 * https://archive.org/details/Win7UltimateSP1CHS
 
+## 编译代码
+
+* make build
+
 ## ⚠️ 免责声明
 
 - **合法合规使用**：本存储库旨在为大家方便安装虚拟机。使用者应严格遵守所在司法辖区法律法规及相关平台服务条款，任何非法用途的法律责任由使用者自行承担

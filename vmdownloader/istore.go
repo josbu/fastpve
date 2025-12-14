@@ -98,6 +98,7 @@ func GetIstoreUrls(ctx context.Context, d Downloader, ver int) ([]string, error)
 	}
 	lastVer := strings.Replace(string(versionResp), "\n", "", -1)
 	return []string{
+		fmt.Sprintf("https://fw.d4ctech.com/%s/x86_64_efi/istoreos-%s-x86-64-squashfs-combined-efi.img.gz", name, lastVer),
 		fmt.Sprintf("https://dl.istoreos.com/%s/x86_64_efi/istoreos-%s-x86-64-squashfs-combined-efi.img.gz", name, lastVer),
 		fmt.Sprintf("https://fw0.koolcenter.com/%s/x86_64_efi/istoreos-%s-x86-64-squashfs-combined-efi.img.gz", name, lastVer),
 	}, nil

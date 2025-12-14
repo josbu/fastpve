@@ -52,10 +52,16 @@ func WithRemoteURLCache(cache RemoteURLCache) DownloaderOption {
 }
 
 func NewDownloader(opts ...DownloaderOption) *Downloader {
+	tr := &http.Transport{
+		ForceAttemptHTTP2: false,
+	}
 	d := &Downloader{
-		client: &http.Client{},
+		client: &http.Client{
+			Transport: tr,
+		},
 		noRedirectClient: &http.Client{
-			Timeout: time.Second * 10,
+			Timeout:   time.Second * 10,
+			Transport: tr,
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
 			},

@@ -106,25 +106,28 @@ func (d *Downloader) ResumableDownloader(ctx context.Context,
 		resp.Body.Close()
 	})
 
+	const waitTimeout = time.Second * 60
+	const sizeMin = 8 * 1024 * 1024
+	const sizeMax = 256 * 1024 * 1024
 	buf := make([]byte, 2*1024*1024)
 	var n int64
-	var defSize int64 = 16 * 1024 * 1024
+	var defSize int64 = sizeMin
 
 	doneCh := make(chan struct{})
 	loopCh := make(chan struct{}, 1)
-	timeoutTick := time.NewTimer(time.Second * 30)
+	timeoutTick := time.NewTimer(waitTimeout)
 	go func() {
 	LOOP_SEL:
 		for {
 			select {
 			case <-timeoutTick.C:
-				//fmt.Println("Download timeout")
+				fmt.Println("Download timeout")
 				once.Do(func() {
 					resp.Body.Close()
 				})
 				break LOOP_SEL
 			case <-loopCh:
-				utils.ResetTimer(timeoutTick, time.Second*30)
+				utils.ResetTimer(timeoutTick, waitTimeout)
 			case <-doneCh:
 				break LOOP_SEL
 			}
@@ -135,17 +138,20 @@ func (d *Downloader) ResumableDownloader(ctx context.Context,
 		now := time.Now()
 		n, err = io.CopyBuffer(file, io.LimitReader(resp.Body, defSize), buf)
 		status.Curr += n
-		loopCh <- struct{}{}
+		select {
+		case loopCh <- struct{}{}:
+		default:
+		}
 		since := time.Since(now)
 		if since < time.Second*5 {
 			defSize *= 2
-			if defSize > 256*1024*1024 {
-				defSize = 256 * 1024 * 1024
+			if defSize > sizeMax {
+				defSize = sizeMax
 			}
 		} else {
 			defSize = defSize / 2
-			if defSize < 16*1024*1024 {
-				defSize = 16 * 1024 * 1024
+			if defSize < sizeMin {
+				defSize = sizeMin
 			}
 		}
 		speed := 1000 * n / (since.Milliseconds() + 1)
